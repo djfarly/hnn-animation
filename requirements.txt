@@ -1,0 +1,2 @@
+manim
+manim-neural-network==0.1.0

@@ -1,0 +1,64 @@
+---
+description: How to use manim_neural_network (NeuralNetworkMobject) for NN visuals
+globs: "**/*.py"
+alwaysApply: false
+---
+
+# manim_neural_network usage
+
+Source: [manim-neural-network](https://github.com/JPM2002/manim-neural-network) — `NeuralNetworkMobject` is a sequential NN mobject for Manim.
+
+## Import
+
+```python
+from manim import *
+from manim_neural_network import NeuralNetworkMobject
+# or: from manim_neural_network.neural_network import NeuralNetworkMobject
+```
+
+## Constructor
+
+```python
+nn = NeuralNetworkMobject(neural_network)
+```
+
+- **neural_network**: list of layer sizes, e.g. `[3, 4, 4, 1]` (input, hidden..., output). Defines number of neurons per layer.
+
+## Styling (set before constructing, or subclass)
+
+Set these on the class or instance before `add_neurons`/`add_edges` run (i.e. override in a subclass or monkey-patch before calling `NeuralNetworkMobject(...)`):
+
+| Attribute | Default | Meaning |
+|-----------|--------|--------|
+| `neuron_radius` | 0.15 | Circle radius per neuron |
+| `neuron_to_neuron_buff` | 0.2 | Vertical spacing in a layer |
+| `layer_to_layer_buff` | 1.0 | Horizontal spacing between layers |
+| `input_neuron_color` | WHITE | Stroke color for input layer |
+| `hidden_layer_neuron_color` | WHITE | Stroke for hidden layers |
+| `output_neuron_color` | WHITE | Stroke for output layer |
+| `neuron_stroke_width` | 2 | Neuron circle stroke |
+| `neuron_fill_opacity` | 1 | Fill opacity (fill_color is BLACK) |
+| `edge_color` | LIGHT_GREY | Connection lines color |
+| `edge_stroke_width` | 2 | Connection line width |
+
+## Methods (call after creating the mobject)
+
+- **label_inputs(label)** — Adds MathTex labels `label_1`, `label_2`, … to the left of each input neuron. `label` is the symbol (e.g. `"x"`).
+- **label_outputs(label)** — Same for output layer, labels to the right (e.g. `"y"`).
+- **label_layers(labels, input_size=0.4, hidden_size=0.25, output_size=0.4)** — Places `Text` above each layer. `labels`: list of strings, one per layer (e.g. `["Input", "Hidden", "Hidden", "Output"]`). Returns a `VGroup` of the label mobjects for animation.
+
+## Internal structure (for animations)
+
+- `nn.layers` — `VGroup` of layers (left to right).
+- `nn.layers[i].neurons` — `VGroup` of circles for that layer.
+- `nn.edge_groups` — `VGroup` of edge groups between consecutive layers (each group is all edges between two layers). Edges have `z_index=0`, neurons `z_index=1`.
+
+## Example
+
+```python
+nn = NeuralNetworkMobject([3, 4, 1])
+nn.label_inputs("x")
+nn.label_outputs("y")
+nn.label_layers(["Input", "Hidden", "Output"])
+self.play(Create(nn))
+```
